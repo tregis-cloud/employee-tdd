@@ -1,10 +1,13 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
 // const employee = require("./Employee");
-const render = require("./htmlRenderer");
-const Engineer = require("./Engineer");
-const Manager = require("./Manager");
-const Intern = require("./Intern");
+const render = require("./lib/htmlRenderer");
+const Engineer = require("./lib/Engineer");
+const Manager = require("./lib/Manager");
+const Intern = require("./lib/Intern");
+const path = require("path");
+const OUTPUT_DIR = path.resolve(__dirname, "output");
+const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const employeeArray = [];
 createManager();
@@ -47,12 +50,18 @@ function createManager() {
         name: "managerEmail",
         message: "Please enter manager's email: ",
       },
+      {
+        type: "input",
+        name: "managerOfficeNumber",
+        message: "Please enter manager's office number: ",
+      },
     ])
     .then(function (data) {
       const manager = new Manager(
         data.managerName,
         data.managerID,
-        data.managerEmail
+        data.managerEmail,
+        data.managerOfficeNumber
       );
       employeeArray.push(manager);
       buildTeam();
@@ -132,7 +141,7 @@ function createIntern() {
 }
 function exitProgram() {
   const employeeData = render(employeeArray);
-  fs.writeFile("./employee.txt", employeeData, function (err) {
+  fs.writeFile(outputPath, employeeData, function (err) {
     if (err) throw err;
     console.log(employeeData);
     console.log("Success!");
